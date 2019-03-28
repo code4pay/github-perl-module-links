@@ -1,0 +1,13 @@
+{
+    "name" : "Add Module Links", 
+    "version": "0.1", 
+    "description" : "Add Links to Perl Modules",
+    "manifest_version": 2,
+    "permissions": ["activeTab"],
+   "content_scripts": [
+   {
+     "matches": ["https://github.com/*"],
+     "js": ["default.js"]
+   }
+ ]
+}
