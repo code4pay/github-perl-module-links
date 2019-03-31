@@ -1,6 +1,6 @@
 
 function add_links (){
-	var matches = document.querySelectorAll("td.blob-code span, table.js-file-line-container td, table.diff-table span");
+	var matches = document.querySelectorAll("td.blob-code span, table.js-file-line-container td, table.diff-table span, table.diff-table td  ");
 	matches.forEach(function(e){ 
 		var getModule = /(\w+::)+[A-Z]\w+/;
 		var text = e.textContent.match(getModule);  
