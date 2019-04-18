@@ -1,6 +1,6 @@
 
 function add_links (){
-	var matches = document.querySelectorAll("td.blob-code span, table.js-file-line-container td, table.diff-table span, table.diff-table td  ");
+	var matches = document.querySelectorAll("td.blob-code span, table.js-file-line-container td, table.diff-table span, table.diff-table td, table.js-file-line-container td, table.js-file-line-container span  ");
 	matches.forEach(function(e){ 
 		var getModule = /(\w+::)+[A-Z]\w+/;
 		var text = e.textContent.match(getModule);  
@@ -13,8 +13,9 @@ function add_links (){
 				url = 'https://github.com/regentmarkets/binary-websocket-api/blob/master/lib/'+text[0].replace(/::/g, '/') +'.pm';
 			} else if (prefix == 'BOM') {
 				var second_name = module[1];
-				if (module[1] == 'Event') { 
-					second_name = 'events';
+                                var module_map = { "Event" :"events", "Database" : "postgres"} 
+				if (module_map[module[1]]) { 
+					second_name = module_map[module[1]];
                                 }
 				var inner = module[0] +'-'+second_name;
 				inner = inner.toLowerCase();
@@ -28,5 +29,5 @@ function add_links (){
     }
 
 
-setTimeout(add_links, 500);
+setTimeout(add_links, 1000);
 
