@@ -12,12 +12,15 @@ function add_links (){
 			if (prefix == 'Binary'){
 				url = 'https://github.com/regentmarkets/binary-websocket-api/blob/master/lib/'+text[0].replace(/::/g, '/') +'.pm';
 			} else if (prefix == 'BOM') {
+                                var concater = '-';
 				var second_name = module[1];
-                                var module_map = { "Event" :"events", "Database" : "postgres"} 
-				if (module_map[module[1]]) { 
+                                var module_map = { "Event" :"events", "Database" : "postgres", "Product": ''} 
+				if (module_map[module[1]] !== undefined) { 
 					second_name = module_map[module[1]];
+                                        if (second_name == '' ) { concater = ''; }
                                 }
-				var inner = module[0] +'-'+second_name;
+                                
+				var inner = module[0] + concater + second_name;
 				inner = inner.toLowerCase();
 				
 				url = 'https://github.com/regentmarkets/'+inner+'/blob/master/lib/'+text[0].replace(/::/g, '/') +'.pm'
