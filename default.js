@@ -1,4 +1,4 @@
-
+var subroutines = {};
 function add_links (){
     var matches = document.querySelectorAll("td.blob-code span, table.js-file-line-container td, table.diff-table span, table.diff-table td, table.js-file-line-container td, table.js-file-line-container span  ");
     matches.forEach(function(e){ 
@@ -31,6 +31,40 @@ function add_links (){
             e.innerHTML = e.textContent.replace(getModule,'<a href="'+url+'">'+ text[0] +'</a>' )} })
 }
 
+function navigateToSub (el) {
+    var text = el.innerText;
+    var method_match = text.match(/(\{|\(|\s|->)(\w*)\(/);
+    var sub = '';
+
+    if (method_match && method_match.length >= 3) { 
+        sub = method_match[2];
+        if (sub  && subroutines[sub]) {
+            location.hash = '#'+sub 
+            return
+        }
+    }
+
+    var getModule = /(\w+::)+(\w)+\(/;
+
+    var module_text = el.textContent.match(getModule);
+    if(module_text) {
+        var bits = module_text[0].split('::');
+
+
+        var methodbit = '->'+bits.pop();
+        method_match = methodbit.match(/(\s|->)(\w*)\(/);
+
+        if (method_match  && method_match.length >= 3) { 
+            var method = method_match[2]; 
+            var href = el.querySelector('a').href;
+            window.location =href+'#'+method;
+        }
+    }
+}
+
+
+
+
 function list_subs () {
     var modal_div = document.createElement('div');
     modal_div.hidden = true;
@@ -46,6 +80,7 @@ function list_subs () {
             var li = document.createElement('li');
             var sub_element =e.closest('td').querySelector('.pl-en');
             var sub = sub_element.innerText;
+            subroutines[sub] = e;
             sub_element.id = sub; 
             li.innerHTML ='<a href="#'+sub+'">'+sub+'</a>';
             fragment.append(li);
@@ -54,6 +89,17 @@ function list_subs () {
     }});
     modal_ul.appendChild(fragment)
     modal_div.appendChild(modal_ul);
+    var subroutine;
+    if (location.hash) {
+        subroutine = location.hash.slice(1);
+        console.log(subroutine);
+        if (subroutines[subroutine]) {
+        subroutine = location.hash;
+        location.hash = '';
+            location.hash = subroutine;
+        }
+    }
+    
 
     document.onkeydown = shortcut;
 
@@ -68,6 +114,13 @@ function list_subs () {
 
     }
 }
+
+
+window.addEventListener("mousedown",function(event){
+    navigateToSub(event.srcElement);
+
+});
+
 setTimeout(add_links, 1000);
 setTimeout(list_subs, 1000);
 
