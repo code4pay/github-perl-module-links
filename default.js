@@ -1,15 +1,20 @@
 var subroutines = {};
 
-function navigateToSub (el) {
+function navigateToSub (el, hover) {
     var text = el.innerText;
+    if (!text) {return;}
     var method_match = text.match(/(\{|\(|\s|->)(\w+)\(/);
     var sub = '';
 
     if (method_match && method_match.length >= 3) { 
         sub = method_match[2];
         if (sub  && subroutines[sub]) {
-            location.hash = '';
-            location.hash = '#'+sub 
+            if(hover) {
+                el.style.cursor = 'pointer';
+            } else {
+                location.hash = '';
+                location.hash = '#'+sub 
+            }
             return
         }
     }
@@ -27,19 +32,32 @@ function navigateToSub (el) {
         if (method_match  && method_match.length >= 3) { 
             var method = method_match[2];
             if (subroutines[method]) {
+                
+            if(hover) {
+                el.style.cursor = 'pointer';
+            } else {
                 location.hash = '';
-            location.hash = '#'+method 
+                location.hash = '#'+method 
+            }
             return
             }
             var href = module_url(el.textContent);
+            if(hover) {
+                el.style.cursor = 'pointer';
+            } else {
             window.location =href+'#'+method;
+            }
         }
     }else {
 
         // just a module no function 
         var url = module_url(el.textContent);
         if (url) {
-            window.location = url;     
+            if(hover) {
+                el.style.cursor = 'pointer';
+            } else {
+                window.location = url;     
+            }
         }
     }
 
@@ -131,12 +149,37 @@ function list_subs () {
     }
 }
 
+
+function linkDirectToCircleCI () {
+     if (window.location.href != 'https://github.com/pulls'){
+       return ;
+     }
+     var failures = document.querySelectorAll("div.js-issue-row");
+     failures.forEach(function(el) {
+            var error_link =el.querySelector("a.text-red");
+            if (!error_link) {return;}
+            var prByElement = el.querySelector("span.opened-by");
+            var prId = prByElement.innerText.match(/^#(\d+)\s/)[1];
+            error_link.href = 'https://circleci.com/gh/regentmarkets/binary-websocket-api/tree/pull%2F'+prId
+     });
+
+}
+
 var codeWindow  = document.querySelector("div.Box-body.type-perl, div.diff-view");
-codeWindow.addEventListener("mousedown",function(event){
-    navigateToSub(event.srcElement);
+if (codeWindow){
+    codeWindow.addEventListener("mousedown",function(event){
+        if (event.which == 1 ){
+            navigateToSub(event.srcElement);
+        }
+    });
 
-});
+    codeWindow.addEventListener("mouseover",function(event){
+        navigateToSub(event.srcElement, true);
+    });
+}
 
-//setTimeout(add_links, 1000);
+
+
+setTimeout(linkDirectToCircleCI, 500);
 setTimeout(list_subs, 1000);
 
