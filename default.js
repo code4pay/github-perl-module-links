@@ -156,14 +156,16 @@ function linkDirectToCircleCI () {
      }
      var failures = document.querySelectorAll("div.js-issue-row");
      failures.forEach(function(el) {
-            var error_link =el.querySelector("a.text-red");
+            var error_link =el.querySelector("a.text-red, a.bg-pending");
             if (!error_link) {return;}
-            var prByElement = el.querySelector("span.opened-by");
-            var prId = prByElement.innerText.match(/^#(\d+)\s/)[1];
-            error_link.href = 'https://circleci.com/gh/regentmarkets/binary-websocket-api/tree/pull%2F'+prId
+            var keys = el.getAttribute('id').split('_');
+            
+            error_link.href = 'https://circleci.com/gh/regentmarkets/'+keys[3]+'/tree/pull%2F'+keys[1];
      });
 
 }
+
+
 
 var codeWindow  = document.querySelector("div.Box-body.type-perl, div.diff-view");
 if (codeWindow){
@@ -178,6 +180,10 @@ if (codeWindow){
     });
 }
 
+//listen for when the files tab is clicked in PR review 
+
+var tabs = document.querySelector("div.tabnav.tabnav-pr");
+if (tabs) {tabs.addEventListener("click",  list_subs);}
 
 
 setTimeout(linkDirectToCircleCI, 500);
